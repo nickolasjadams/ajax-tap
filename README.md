@@ -7,7 +7,7 @@ Listen in on any trusted XHR's made on your webpage. Run functions when your con
 
 ## Why?
 
-Say we are saving via our API. 
+Say we are performing CRUD operation with AJAX through our API. 
 
 And our API always returns this structure
 
