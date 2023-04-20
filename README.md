@@ -1,6 +1,6 @@
 # AjaxTap
 
-[![npm version](https://badge.fury.io/js/ele.svg)](//npmjs.com/package/@stegopop/ajax-tap)
+[![npm version](https://badge.fury.io/js/ajax-tap.svg)](//npmjs.com/package/@stegopop/ajax-tap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Listen in on any trusted XHR's made on your webpage. Run functions when your conditions are met.
