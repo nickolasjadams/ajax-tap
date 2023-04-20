@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AjaxTap Development</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+</head>
+<body>
+
+    <p>Last Request</p>
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Parity</th>
+        </tr>
+        <tr>
+            <td id="lastNumber">none</td>
+            <td id="lastParity">none</td>
+        </tr>
+    </table>
+
+    <div id="test2"></div>
+
+    <button id="test">Perform an Ajax request</button>
+
+    <button id="button2">An Ajax request that doesn't matter</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script><!-- for easy testing with ajax -->
+    <script src="/dist/ajax-tap.min.js"></script>
+    <script>
+        (function() {
+            new AjaxTap()
+                .addResponseEvent({
+                    trustedMessengers: [ "localhost:3000" ],
+                    conditions: function(data) {
+                        if (data.number) {
+                            if (!isNaN(parseInt(data.number))) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    },
+                    fire: function(data) {
+                        let lastNumber = document.querySelector("#lastNumber");
+                        let lastParity = document.querySelector("#lastParity");
+                        lastNumber.innerHTML = data.number;
+                        lastParity.innerHTML = data.parity;
+                    }
+                })
+                // .addResponseEvent({
+                //     trustedMessengers: [ "localhost:3000" ],
+                //     conditions: function(data) {
+                //         return data.body;
+                //     },
+                //     fire: function(data) {
+                //         alert(data.body);
+                //     }
+                // })
+                .listen();
+
+
+            function buttonClick() {
+                var r = Math.ceil( Math.random() * 2 );
+                $.get( "http://localhost:3000/numbers/" + r)
+                .done(function() {
+                    console.log("made a request after the user clicked the button.")
+                })
+                .fail(function() {
+                    console.log( "error" );
+                });
+            }
+            $("#test").on("click", buttonClick);
+
+            function button2Click() {
+                $.get( "http://localhost:3000/comments/1")
+                .done(function() {
+                    $("#test2").html("Made a network request. But it wasn't important.");
+                })
+            }
+            $("#button2").on("click", button2Click);
+        })();
+    </script>
+
+</body>
+</html>

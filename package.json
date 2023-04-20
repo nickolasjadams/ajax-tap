@@ -1,0 +1,30 @@
+{
+  "name": "@stegopop/ajax-tap",
+  "version": "1.0.0",
+  "description": "Listen in on any trusted XHR's made on your webpage. Run functions when your conditions are met.",
+  "main": "dist/ajax-tap.min.js",
+  "scripts": {
+    "js": "babel src/AjaxTap.js --out-file dist/ajax-tap.min.js",
+    "watch": "npm run js -- --watch",
+    "serve": "php -S localhost:3001 & open -a 'Google Chrome' http://localhost:4040",
+    "test-api-server": "json-server --watch db.json"
+  },
+  "author": "Nick Adams",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickolasjadams/ajax-tap"
+  },
+  "keywords": [
+    "ajax",
+    "listener",
+    "vanilla",
+    "browser"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "json-server": "^0.17.3"
+  }
+}
