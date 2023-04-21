@@ -9,6 +9,8 @@
 </head>
 <body>
 
+    <input type="hidden" id="secret" value="Scraped Data">
+
     <p>Last Request</p>
     <table>
         <tr>
@@ -22,10 +24,17 @@
     </table>
 
     <div id="test2"></div>
+    <div id="test3"></div>
 
-    <button id="test">Perform an Ajax request</button>
+    <button id="button1">Perform an Ajax request that returns JSON</button>
 
     <button id="button2">An Ajax request that doesn't matter</button>
+
+    <button id="button3">An Ajax request that returns HTML</button>
+
+    <button id="button4">An Ajax request that returns XML</button>
+
+    <button id="button5">An Ajax request that returns Text</button>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script><!-- for easy testing with ajax -->
     <script src="/dist/ajax-tap.min.js"></script>
@@ -35,7 +44,7 @@
                 .addResponseEvent({
                     trustedMessengers: [ "localhost:3000" ],
                     conditions: function(data) {
-                        if (data.number) {
+                        if (data.number != null) {
                             if (!isNaN(parseInt(data.number))) {
                                 return true;
                             }
@@ -49,19 +58,22 @@
                         lastParity.innerHTML = data.parity;
                     }
                 })
-                // .addResponseEvent({
-                //     trustedMessengers: [ "localhost:3000" ],
-                //     conditions: function(data) {
-                //         return data.body;
-                //     },
-                //     fire: function(data) {
-                //         alert(data.body);
-                //     }
-                // })
+                .addResponseEvent({
+                    trustedMessengers: [ "localhost:3001" ],
+                    conditions: function(data) {
+                        if (data.constructor.name == "HTMLDocument") {
+                            return (data.querySelector("#secret") != null);
+                        }
+                        return false;
+                    },
+                    fire: function(data) {
+                        $("#test3").html(data.querySelector("#secret").value);
+                    }
+                })
                 .listen();
 
 
-            function buttonClick() {
+            $("#button1").on("click", function() {
                 var r = Math.ceil( Math.random() * 2 );
                 $.get( "http://localhost:3000/numbers/" + r)
                 .done(function() {
@@ -70,16 +82,36 @@
                 .fail(function() {
                     console.log( "error" );
                 });
-            }
-            $("#test").on("click", buttonClick);
+            });
 
-            function button2Click() {
+            $("#button2").on("click", function() {
                 $.get( "http://localhost:3000/comments/1")
                 .done(function() {
                     $("#test2").html("Made a network request. But it wasn't important.");
                 })
-            }
-            $("#button2").on("click", button2Click);
+            });
+
+            $("#button3").on("click", function() {
+                $.get( "http://localhost:3001/index.html")
+                .done(function() {
+                    $("#test2").html("Made a network request. It should be HTML.");
+                })
+            });
+
+            $("#button4").on("click", function() {
+                $.get( "http://localhost:3001/test.xml")
+                .done(function() {
+                    $("#test2").html("Made a network request. It should be XML.");
+                })
+            });
+
+            $("#button5").on("click", function() {
+                $.get( "http://localhost:3001/test.txt")
+                .done(function() {
+                    $("#test2").html("Made a network request. It should be text.");
+                })
+            });
+
         })();
     </script>
 

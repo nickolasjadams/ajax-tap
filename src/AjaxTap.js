@@ -7,13 +7,14 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 class AjaxTap {
     
     constructor() {
         this.responseEvents = [];
+        this.dev = false;
     }
 
     /**
@@ -39,7 +40,7 @@ class AjaxTap {
             fire: null
         };
 
-        // Add all trusted messengers
+        // Add all trusted messengers.
         responseEvent.trustedMessengers.push(window.location.origin); // Default: this origin
         if (options.trustedMessengers) {
             options.trustedMessengers.forEach(messenger => {
@@ -70,15 +71,30 @@ class AjaxTap {
             XMLHttpRequest.prototype.open = function() {
                 this.addEventListener('load', function() {
 
+                    let matched = false;
                     let origin = AjaxTap.url(this.responseURL).origin;
     
                     _this.responseEvents.forEach(e => {
-                        if (e.trustedMessengers.some( messenger => messenger == origin )) {
-                            
-                            let data = JSON.parse(this.responseText);
-
-                            if (e.conditions(data)) {
-                                e.fire(data);
+                        if (!matched) {
+                            if (e.trustedMessengers.some( messenger => messenger == origin )) {
+                                var contentType = this.getResponseHeader('content-type');
+                                let data;
+                                if (contentType.includes("json")) {
+                                    data = JSON.parse(this.responseText);
+                                } else if (contentType.includes("html")) {
+                                    // Return the Document
+                                    data = (new DOMParser).parseFromString(this.responseText, "text/html");
+                                } else if (contentType.includes("xml")) {
+                                    // Return the Document
+                                    data = this.responseXML;
+                                } else if (contentType.includes("text")) {
+                                    data = this.responseText;
+                                }
+    
+                                if (e.conditions(data)) {
+                                    matched = true;
+                                    e.fire(data);
+                                }
                             }
                         }
                     });
@@ -86,7 +102,9 @@ class AjaxTap {
                 origOpen.apply(this, arguments);
             };
         } catch(e) {
-            console.error(e);
+            if (dev) {
+                console.error(e);
+            }
         }
     }
 
