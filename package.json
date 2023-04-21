@@ -1,6 +1,6 @@
 {
   "name": "@stegopop/ajax-tap",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Listen in on any trusted XHR's made on your webpage. Run functions when your conditions are met.",
   "main": "dist/ajax-tap.min.js",
   "scripts": {
