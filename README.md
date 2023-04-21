@@ -18,6 +18,8 @@ And our API always returns this structure
 }
 ```
 
+It's not mandatory that you return JSON. It could be JSON, HTML, XML, or plain Text. But this example uses JSON.
+
 In your main template you could listen to all Ajax requests, and if they have this structure and come from a URL origin you trust, you can display the message at the top of the page.
 
 ```
