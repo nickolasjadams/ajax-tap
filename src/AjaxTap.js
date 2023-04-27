@@ -7,7 +7,7 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 class AjaxTap {

@@ -4,9 +4,10 @@
   "description": "Listen in on any trusted XHR's made on your webpage. Run functions when your conditions are met.",
   "main": "dist/ajax-tap.min.js",
   "scripts": {
-    "js": "babel src/AjaxTap.js --out-file dist/ajax-tap.min.js",
+    "js": "babel src/AjaxTap.js --out-file dist/ajax-tap.js",
     "watch": "npm run js -- --watch",
-    "serve": "php -S localhost:3001 & open -a 'Google Chrome' http://localhost:4040",
+    "minify": "uglifyjs --compress --ie --comments --output dist/ajax-tap.min.js -- src/AjaxTap.js",
+    "serve": "php -S localhost:3001 & open -a 'Google Chrome' http://localhost:3001",
     "test-api-server": "json-server --watch db.json"
   },
   "author": "Nick Adams",
@@ -25,6 +26,7 @@
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
-    "json-server": "^0.17.3"
+    "json-server": "^0.17.3",
+    "uglify-js": "^3.17.4"
   }
 }
