@@ -7,9 +7,9 @@ Listen in on any trusted XHR's made on your webpage. Run functions when your con
 
 ## Why?
 
-Say we are performing CRUD operation with AJAX through our API. 
+Say we are performing CRUD operation with AJAX through our (or someone else's) API. 
 
-And our API always returns this structure
+And the API always returns this structure
 
 ```
 {
@@ -18,20 +18,23 @@ And our API always returns this structure
 }
 ```
 
-It's not mandatory that you return JSON. It could be JSON, HTML, XML, or plain Text. But this example uses JSON.
+It's not mandatory that you return JSON. It could be JSON, HTML, XML, or plain Text.
 
 In your main template you could listen to all Ajax requests, and if they have this structure and come from a URL origin you trust, you can display the message at the top of the page.
 
-```
+```js
 <script src="/dist/ajax-tap.min.js"></script>
 <script>
     (function() {
         new AjaxTap()
             .addResponseEvent({
+                trustedMessengers: [ "a-different-domain-you-trust.com" ],
                 conditions: function(data) {
+                    // The response contains keys for 'type' and 'message'.
                     return (data.type && data.message)
                 },
                 fire: function(data) {
+                    // Display the message at the top of the page.
                     var messages = document.querySelector("#messages");
                     var message = document.createElement("div");
                         message.classList.add(data.type);
@@ -48,13 +51,13 @@ In your main template you could listen to all Ajax requests, and if they have th
 
 With NPM
 
-```
+```markdown
 npm install @stegopop/ajax-tap
 ```
 
 With a CDN
 
-```
+```html
 <script src="https://cdn.jsdelivr.net/npm/@stegopop/ajax-tap"></script>
 ```
 
@@ -71,6 +74,7 @@ This method returns the Tap so you can chain off of it.
  
 Request Event Object Options
  - trustedMessengers (optional): Array
+     -  The origin of the calling website is included in trustedMessengers by default.
  - conditions        (required): Function
      - You must provide data as an argument to this function.
      - This function must return true or false.

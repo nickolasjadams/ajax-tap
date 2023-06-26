@@ -7,7 +7,7 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 class AjaxTap {
@@ -76,7 +76,9 @@ class AjaxTap {
     
                     _this.responseEvents.forEach(e => {
                         if (!matched) {
-                            if (e.trustedMessengers.some( messenger => messenger == origin )) {
+                            // Check if response comes from trusted messenger
+                            if (e.trustedMessengers.some(messenger => origin.includes(messenger))) {
+                                // Parse data based on content-type
                                 var contentType = this.getResponseHeader('content-type');
                                 let data;
                                 if (contentType.includes("json")) {
@@ -92,6 +94,7 @@ class AjaxTap {
                                 }
     
                                 if (e.conditions(data)) {
+                                    // Fire function if conditions are met
                                     matched = true;
                                     e.fire(data);
                                 }
@@ -114,7 +117,7 @@ class AjaxTap {
      */
     static url(str) {
         let a = document.createElement('a');
-        a.setAttribute('href', this);
+        a.setAttribute('href', str);
         let origin = a.protocol + '//' + a.hostname;
         if (a.port.length > 0) {
             origin = `${origin}:${a.port}`;

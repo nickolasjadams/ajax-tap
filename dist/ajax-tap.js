@@ -15,7 +15,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.3
+ * @version 1.0.4
  */
 var AjaxTap = /*#__PURE__*/function () {
   function AjaxTap() {
@@ -90,9 +90,11 @@ var AjaxTap = /*#__PURE__*/function () {
             var origin = AjaxTap.url(this.responseURL).origin;
             _this.responseEvents.forEach(function (e) {
               if (!matched) {
+                // Check if response comes from trusted messenger
                 if (e.trustedMessengers.some(function (messenger) {
-                  return messenger == origin;
+                  return origin.includes(messenger);
                 })) {
+                  // Parse data based on content-type
                   var contentType = _this2.getResponseHeader('content-type');
                   var data;
                   if (contentType.includes("json")) {
@@ -107,6 +109,7 @@ var AjaxTap = /*#__PURE__*/function () {
                     data = _this2.responseText;
                   }
                   if (e.conditions(data)) {
+                    // Fire function if conditions are met
                     matched = true;
                     e.fire(data);
                   }
@@ -131,7 +134,7 @@ var AjaxTap = /*#__PURE__*/function () {
     key: "url",
     value: function url(str) {
       var a = document.createElement('a');
-      a.setAttribute('href', this);
+      a.setAttribute('href', str);
       var origin = a.protocol + '//' + a.hostname;
       if (a.port.length > 0) {
         origin = "".concat(origin, ":").concat(a.port);

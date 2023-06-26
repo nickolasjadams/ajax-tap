@@ -6,9 +6,10 @@
   "scripts": {
     "js": "babel src/AjaxTap.js --out-file dist/ajax-tap.js",
     "watch": "npm run js -- --watch",
-    "minify": "uglifyjs --compress --ie --comments --output dist/ajax-tap.min.js -- src/AjaxTap.js",
+    "minify": "uglifyjs --compress --ie --comments --output dist/ajax-tap.min.js -- dist/ajax-tap.js",
     "serve": "php -S localhost:3001 & open -a 'Google Chrome' http://localhost:3001",
-    "test-api-server": "json-server --watch db.json"
+    "test-api-server": "json-server --watch db.json",
+    "prep-release": "npm run js && npm run minify"
   },
   "author": "Nick Adams",
   "license": "MIT",

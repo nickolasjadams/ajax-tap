@@ -9,6 +9,8 @@
 </head>
 <body>
 
+    <div class="alert" style="background: #6d00d7; color: #fff; border-radius: 6px;"></div>
+
     <input type="hidden" id="secret" value="Scraped Data">
 
     <p>Last Request</p>
@@ -35,12 +37,27 @@
     <button id="button4">An Ajax request that returns XML</button>
 
     <button id="button5">An Ajax request that returns Text</button>
+    
+    <button id="button6">An Ajax request to a trusted API call</button>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script><!-- for easy testing with ajax -->
     <script src="/dist/ajax-tap.min.js"></script>
     <script>
         (function() {
             new AjaxTap()
+                .addResponseEvent({
+                    trustedMessengers: [ "mocki.io" ],
+                    conditions: function(data) {
+                        if (data.message != null) {
+                            return true;
+                        }
+                        return false;
+                    },
+                    fire: function(data) {
+                        let alert = document.querySelector(".alert");
+                        alert.innerHTML = `<div style="padding: 10px 15px;">${data.message}</div>`;
+                    }
+                })
                 .addResponseEvent({
                     trustedMessengers: [ "localhost:3000" ],
                     conditions: function(data) {
@@ -59,7 +76,6 @@
                     }
                 })
                 .addResponseEvent({
-                    trustedMessengers: [ "localhost:3001" ],
                     conditions: function(data) {
                         if (data.constructor.name == "HTMLDocument") {
                             return (data.querySelector("#secret") != null);
@@ -110,6 +126,10 @@
                 .done(function() {
                     $("#test2").html("Made a network request. It should be text.");
                 })
+            });
+
+            $("#button6").on("click", function() {
+                $.get("https://mocki.io/v1/d6890a3f-fbf5-4e52-977b-72e6dbb59b0b");
             });
 
         })();
