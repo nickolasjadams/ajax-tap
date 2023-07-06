@@ -7,7 +7,7 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 class AjaxTap {
@@ -79,24 +79,26 @@ class AjaxTap {
                             // Check if response comes from trusted messenger
                             if (e.trustedMessengers.some(messenger => origin.includes(messenger))) {
                                 // Parse data based on content-type
-                                var contentType = this.getResponseHeader('content-type');
+                                var contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
                                 let data;
-                                if (contentType.includes("json")) {
-                                    data = JSON.parse(this.responseText);
-                                } else if (contentType.includes("html")) {
-                                    // Return the Document
-                                    data = (new DOMParser).parseFromString(this.responseText, "text/html");
-                                } else if (contentType.includes("xml")) {
-                                    // Return the Document
-                                    data = this.responseXML;
-                                } else if (contentType.includes("text")) {
-                                    data = this.responseText;
-                                }
-    
-                                if (e.conditions(data)) {
-                                    // Fire function if conditions are met
-                                    matched = true;
-                                    e.fire(data);
+                                if (!contentType) { // Only handle if there is a response
+                                    if (contentType.includes("json")) {
+                                        data = JSON.parse(this.responseText);
+                                    } else if (contentType.includes("html")) {
+                                        // Return the Document
+                                        data = (new DOMParser).parseFromString(this.responseText, "text/html");
+                                    } else if (contentType.includes("xml")) {
+                                        // Return the Document
+                                        data = this.responseXML;
+                                    } else if (contentType.includes("text")) {
+                                        data = this.responseText;
+                                    }
+        
+                                    if (e.conditions(data)) {
+                                        // Fire function if conditions are met
+                                        matched = true;
+                                        e.fire(data);
+                                    }
                                 }
                             }
                         }

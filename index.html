@@ -91,7 +91,7 @@
 
             $("#button1").on("click", function() {
                 var r = Math.ceil( Math.random() * 2 );
-                $.get( "http://localhost:3000/numbers/" + r)
+                $.get("http://localhost:3000/numbers/" + r)
                 .done(function() {
                     console.log("made a request after the user clicked the button.")
                 })
@@ -101,28 +101,28 @@
             });
 
             $("#button2").on("click", function() {
-                $.get( "http://localhost:3000/comments/1")
+                $.get("http://localhost:3000/comments/1")
                 .done(function() {
                     $("#test2").html("Made a network request. But it wasn't important.");
                 })
             });
 
             $("#button3").on("click", function() {
-                $.get( "http://localhost:3001/index.html")
+                $.get("http://localhost:3001/index.html")
                 .done(function() {
                     $("#test2").html("Made a network request. It should be HTML.");
                 })
             });
 
             $("#button4").on("click", function() {
-                $.get( "http://localhost:3001/test.xml")
+                $.get("http://localhost:3001/test.xml")
                 .done(function() {
                     $("#test2").html("Made a network request. It should be XML.");
                 })
             });
 
             $("#button5").on("click", function() {
-                $.get( "http://localhost:3001/test.txt")
+                $.get("http://localhost:3001/test.txt")
                 .done(function() {
                     $("#test2").html("Made a network request. It should be text.");
                 })

@@ -95,23 +95,26 @@ var AjaxTap = /*#__PURE__*/function () {
                   return origin.includes(messenger);
                 })) {
                   // Parse data based on content-type
-                  var contentType = _this2.getResponseHeader('content-type');
+                  var contentType = _this2.getResponseHeader('content-type') || _this2.getResponseHeader('Content-Type');
                   var data;
-                  if (contentType.includes("json")) {
-                    data = JSON.parse(_this2.responseText);
-                  } else if (contentType.includes("html")) {
-                    // Return the Document
-                    data = new DOMParser().parseFromString(_this2.responseText, "text/html");
-                  } else if (contentType.includes("xml")) {
-                    // Return the Document
-                    data = _this2.responseXML;
-                  } else if (contentType.includes("text")) {
-                    data = _this2.responseText;
-                  }
-                  if (e.conditions(data)) {
-                    // Fire function if conditions are met
-                    matched = true;
-                    e.fire(data);
+                  if (!contentType) {
+                    // Only handle if there is a response
+                    if (contentType.includes("json")) {
+                      data = JSON.parse(_this2.responseText);
+                    } else if (contentType.includes("html")) {
+                      // Return the Document
+                      data = new DOMParser().parseFromString(_this2.responseText, "text/html");
+                    } else if (contentType.includes("xml")) {
+                      // Return the Document
+                      data = _this2.responseXML;
+                    } else if (contentType.includes("text")) {
+                      data = _this2.responseText;
+                    }
+                    if (e.conditions(data)) {
+                      // Fire function if conditions are met
+                      matched = true;
+                      e.fire(data);
+                    }
                   }
                 }
               }
