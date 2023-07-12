@@ -7,8 +7,9 @@
     "js": "babel src/AjaxTap.js --out-file dist/ajax-tap.js",
     "watch": "npm run js -- --watch",
     "minify": "uglifyjs --compress --ie --comments --output dist/ajax-tap.min.js -- dist/ajax-tap.js",
-    "serve": "php -S localhost:3001 & open -a 'Google Chrome' http://localhost:3001",
+    "serve": "npx http-server -p 3001 --cors -c-1",
     "test-api-server": "json-server --watch db.json",
+    "nothing-server": "node index.js",
     "prep-release": "npm run js && npm run minify"
   },
   "author": "Nick Adams",
@@ -27,7 +28,9 @@
     "@babel/cli": "^7.21.0",
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
+    "http-server": "^14.1.1",
     "json-server": "^0.17.3",
+    "server": "^1.0.38",
     "uglify-js": "^3.17.4"
   }
 }

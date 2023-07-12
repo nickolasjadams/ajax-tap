@@ -7,7 +7,7 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.5
+ * @version 1.0.6
  */
 
 class AjaxTap {
@@ -79,9 +79,9 @@ class AjaxTap {
                             // Check if response comes from trusted messenger
                             if (e.trustedMessengers.some(messenger => origin.includes(messenger))) {
                                 // Parse data based on content-type
-                                var contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
-                                let data;
-                                if (!contentType) { // Only handle if there is a response
+                                let contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
+                                let data = null;
+                                if (typeof contentType !== "undefined" && contentType !== null) { // Only handle if there is a response
                                     if (contentType.includes("json")) {
                                         data = JSON.parse(this.responseText);
                                     } else if (contentType.includes("html")) {

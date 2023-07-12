@@ -40,13 +40,15 @@
     
     <button id="button6">An Ajax request to a trusted API call</button>
 
+    <button id="button7">An Ajax request with no content returned</button>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script><!-- for easy testing with ajax -->
     <script src="/dist/ajax-tap.min.js"></script>
     <script>
         (function() {
             new AjaxTap()
                 .addResponseEvent({
-                    trustedMessengers: [ "mocki.io" ],
+                    trustedMessengers: [ "mocki.io", "localhost:3002" ],
                     conditions: function(data) {
                         if (data.message != null) {
                             return true;
@@ -87,6 +89,7 @@
                     }
                 })
                 .listen();
+                
 
 
             $("#button1").on("click", function() {
@@ -130,6 +133,10 @@
 
             $("#button6").on("click", function() {
                 $.get("https://mocki.io/v1/d6890a3f-fbf5-4e52-977b-72e6dbb59b0b");
+            });
+
+            $("#button7").on("click", function() {
+                $.get("http://localhost:3002/nothing");
             });
 
         })();

@@ -15,7 +15,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.4
+ * @version 1.0.6
  */
 var AjaxTap = /*#__PURE__*/function () {
   function AjaxTap() {
@@ -96,8 +96,8 @@ var AjaxTap = /*#__PURE__*/function () {
                 })) {
                   // Parse data based on content-type
                   var contentType = _this2.getResponseHeader('content-type') || _this2.getResponseHeader('Content-Type');
-                  var data;
-                  if (!contentType) {
+                  var data = null;
+                  if (typeof contentType !== "undefined" && contentType !== null) {
                     // Only handle if there is a response
                     if (contentType.includes("json")) {
                       data = JSON.parse(_this2.responseText);
