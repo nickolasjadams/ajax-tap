@@ -9,7 +9,7 @@ const cors = [
     ctx => ctx.method.toLowerCase() === 'options' ? 200 : false
 ];
 
-const port = 3002;
+const port = 3003;
 
 // Launch server with options and a couple of routes
 server({ port: port }, cors, [

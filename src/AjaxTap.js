@@ -7,7 +7,7 @@
  * @author Nick Adams
  * @see {@link https://github.com/nickolasjadams/ajax-tap|Repository}
  * @license MIT
- * @version 1.0.6
+ * @version 1.0.7
  */
 
 class AjaxTap {
@@ -67,6 +67,62 @@ class AjaxTap {
 
         try {
             let _this = this;
+
+            // Fetch Implementation
+            const originalFetch = fetch;
+            window.fetch = async function() {
+                const fetchResponse = originalFetch.apply(this, arguments);
+                const responseClone = fetchResponse.then(response => {
+                    // Clone the response for further handling
+                    const clonedResponse = response.clone();
+                    // Use clonedResponse to log details or perform other actions
+                    clonedResponse.text().then(body => {
+
+                        let matched = false;
+                        let origin = AjaxTap.url(response.url).origin
+        
+                        _this.responseEvents.forEach(e => {
+                            if (!matched) {
+
+                                // Check if response comes from trusted messenger
+                                if (e.trustedMessengers.some(messenger => origin.includes(messenger))) {
+
+                                    // Parse data based on content-type
+                                    let contentType = response.headers.get('content-type') || response.headers.get('Content-Type');
+                                    let data = null;
+
+                                    if (typeof contentType !== "undefined" && contentType !== null) { // Only handle if there is a response
+                                        if (contentType.includes("json")) {
+                                            data = JSON.parse(body);
+                                        } else if (contentType.includes("html")) {
+                                            // Return the Document
+                                            data = (new DOMParser).parseFromString(body, "text/html");
+                                        } else if (contentType.includes("xml")) {
+                                            // Return the Document
+                                            data = body;
+                                        } else if (contentType.includes("text")) {
+                                            data = body;
+                                        }
+
+                                        if (e.conditions(data)) {
+                                            // Fire function if conditions are met
+                                            matched = true;
+                                            e.fire(data);
+                                        }
+                                    }
+                                    // else {
+                                    //     console.log("Nothing to return.")
+                                    // }
+                                }
+                            }
+                        });
+                    });
+                    return response;
+                });
+                return fetchResponse;
+            };
+
+            // XHR Implementation
             var origOpen = XMLHttpRequest.prototype.open;
             XMLHttpRequest.prototype.open = function() {
                 this.addEventListener('load', function() {
@@ -76,11 +132,14 @@ class AjaxTap {
     
                     _this.responseEvents.forEach(e => {
                         if (!matched) {
+
                             // Check if response comes from trusted messenger
                             if (e.trustedMessengers.some(messenger => origin.includes(messenger))) {
+
                                 // Parse data based on content-type
                                 let contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
                                 let data = null;
+
                                 if (typeof contentType !== "undefined" && contentType !== null) { // Only handle if there is a response
                                     if (contentType.includes("json")) {
                                         data = JSON.parse(this.responseText);
@@ -93,13 +152,16 @@ class AjaxTap {
                                     } else if (contentType.includes("text")) {
                                         data = this.responseText;
                                     }
-        
+
                                     if (e.conditions(data)) {
                                         // Fire function if conditions are met
                                         matched = true;
                                         e.fire(data);
                                     }
                                 }
+                                // else {
+                                //     console.log("Nothing to return.")
+                                // }
                             }
                         }
                     });

@@ -9,30 +9,45 @@
 </head>
 <body>
 
-    <div class="alert" style="background: #6d00d7; color: #fff; border-radius: 6px;"></div>
+    <div class="alert" style="background: #6d00d7; color: #fff; border-radius: 6px; padding: 15px;"></div>
 
     <input type="hidden" id="secret" value="Scraped Data">
 
-    <p>Last Request</p>
-    <table>
-        <tr>
-            <th>Number</th>
-            <th>Parity</th>
-        </tr>
-        <tr>
-            <td id="lastNumber">none</td>
-            <td id="lastParity">none</td>
-        </tr>
-    </table>
+    
 
     <div id="test2"></div>
     <div id="test3"></div>
 
-    <button id="button1">Perform an Ajax request that returns JSON</button>
+    <fieldset>
 
-    <button id="button2">An Ajax request that doesn't matter</button>
+        <p>Last Request</p>
+        <table>
+            <tr>
+                <th>Number</th>
+                <th>Parity</th>
+            </tr>
+            <tr>
+                <td id="lastNumber">none</td>
+                <td id="lastParity">none</td>
+            </tr>
+        </table>
+        
+        <button id="button1">Perform an Ajax request that returns JSON</button>
+        <p>This button should update the last number and parity fields above.</p>
 
-    <button id="button3">An Ajax request that returns HTML</button>
+    </fieldset>
+
+    <fieldset>
+        <button id="button2">An Ajax request that doesn't matter</button>
+        <p>This button will check if any conditions are met. They won't be. So nothing will happen.</p>
+        <p>We update a message up top so you know that nothing happened.</p>
+    </fieldset>
+
+    <fieldset>
+        <button id="button3">An Ajax request that returns HTML</button>
+        <p>The conditions will be met on this event, and the message up top will update and let you know that you hit an HTML endpoint.</p>
+        <p>The fire event searches the HTMLDocument and finds a hidden text input called "#secret" and places the value under that message.</p>
+    </fieldset>
 
     <button id="button4">An Ajax request that returns XML</button>
 
@@ -42,13 +57,17 @@
 
     <button id="button7">An Ajax request with no content returned</button>
 
+    <button id="button8">A fetch request is made</button>
+
+    <button id="button9">A fetch request that should return a message to the purple alert.</button>
+
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script><!-- for easy testing with ajax -->
-    <script src="/dist/ajax-tap.min.js"></script>
+    <script src="/src/AjaxTap.js"></script>
     <script>
         (function() {
             new AjaxTap()
                 .addResponseEvent({
-                    trustedMessengers: [ "mocki.io", "localhost:3002" ],
+                    trustedMessengers: [ "https://mocki.io", "http://localhost:3003" ],
                     conditions: function(data) {
                         if (data.message != null) {
                             return true;
@@ -61,7 +80,7 @@
                     }
                 })
                 .addResponseEvent({
-                    trustedMessengers: [ "localhost:3000" ],
+                    trustedMessengers: [ "http://localhost:3000" ],
                     conditions: function(data) {
                         if (data.number != null) {
                             if (!isNaN(parseInt(data.number))) {
@@ -80,6 +99,7 @@
                 .addResponseEvent({
                     conditions: function(data) {
                         if (data.constructor.name == "HTMLDocument") {
+                            console.log("Found secret in html: " + data.querySelector("#secret"))
                             return (data.querySelector("#secret") != null);
                         }
                         return false;
@@ -113,6 +133,7 @@
             $("#button3").on("click", function() {
                 $.get("http://localhost:3001/index.html")
                 .done(function() {
+                    console.log("Added text to the page 'HTML'.");
                     $("#test2").html("Made a network request. It should be HTML.");
                 })
             });
@@ -120,6 +141,7 @@
             $("#button4").on("click", function() {
                 $.get("http://localhost:3001/test.xml")
                 .done(function() {
+                    console.log("Added text to the page 'XML'.");
                     $("#test2").html("Made a network request. It should be XML.");
                 })
             });
@@ -127,19 +149,59 @@
             $("#button5").on("click", function() {
                 $.get("http://localhost:3001/test.txt")
                 .done(function() {
+                    console.log("Added text to the page 'Text'.");
                     $("#test2").html("Made a network request. It should be text.");
                 })
             });
 
             $("#button6").on("click", function() {
-                $.get("https://mocki.io/v1/d6890a3f-fbf5-4e52-977b-72e6dbb59b0b");
+                $.get("https://mocki.io/v1/d41d398c-dbcd-492e-b779-b564369ab31d");
             });
 
             $("#button7").on("click", function() {
-                $.get("http://localhost:3002/nothing");
+                $.get("http://localhost:3003/nothing");
             });
 
+            $("#button8").on("click", function() {
+                fetch('http://localhost:3001/index.html')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.text(); // Or response.json() for JSON responses
+                    })
+                    .then(data => {
+                        console.log('Data received:', data);
+                        // You can do something with the received data here
+                    })
+                    .catch(error => {
+                        console.error('There has been a problem with your fetch operation:', error);
+                    });
+            })
+
+            $("#button9").on("click", function() {
+                fetch('https://mocki.io/v1/d41d398c-dbcd-492e-b779-b564369ab31d')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        //return response.json(); // Or response.json() for JSON responses
+                    })
+                    .then(data => {
+                        //console.log('Data received:', data);
+                        // You can do something with the received data here
+                    })
+                    .catch(error => {
+                        console.error('There has been a problem with your fetch operation:', error);
+                    });
+            })
+
         })();
+
+        if (window.location.href.includes("127.0.0.1")) {
+            alert("You are going to want to test on 'localhost', rather than '127.0.0.1'.");
+        }
+        
     </script>
 
 </body>
